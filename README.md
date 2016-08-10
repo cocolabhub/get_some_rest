@@ -11,6 +11,11 @@ $ pip install --editable .
 ## ica_var 
 Show explained variance for mne-python ICA solution
 
+##### Examples:
+```bash
+$ ls -1 ./MEG2016/*/*-ica.fif | xargs ica_var >> vars.txt
+```
+
 ## bst2mne
 Convert epochs from brainstorm protocol in .mat format to mne.Epochs object and save to a file
 
@@ -24,7 +29,7 @@ Convert epochs from brainstorm protocol in .mat format to mne.Epochs object and 
 
 	  --help               Show this message and exit.
 
-###### Examples:
+##### Examples:
 ```bash
 $ bst2mne ~/Documents/dmalt_sample_epochs/data*.mat -s ${PWD##*/}-epo.fif -i Control01_Open.ds
 ```
