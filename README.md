@@ -6,3 +6,8 @@ cd get_some_rest
 pip install --editable .
 ```
 
+# Utilities
+
+* ica_var
+* bst2mne
+
