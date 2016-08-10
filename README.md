@@ -13,3 +13,6 @@ Show explained variance for mne-python ICA solution
 
 ### bst2mne
 Convert epochs from brainstorm protocol in .mat format to mne.Epochs object and save to a file
+
+### bst2mne
+Convert epochs from brainstorm protocol in .mat format to mne.Epochs object and save to a file
