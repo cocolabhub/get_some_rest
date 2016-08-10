@@ -21,5 +21,11 @@ Convert epochs from brainstorm protocol in .mat format to mne.Epochs object and 
 	  --rec-type [ds|fif]
 
 	  -i, --infosrc TEXT   file to take info from
-	  
+
 	  --help               Show this message and exit.
+
+	Examples:
+
+```bash
+bst2mne ~/Documents/dmalt_sample_epochs/data*.mat -s ${PWD##*/}-epo.fif -i Control01_Open.ds
+```
