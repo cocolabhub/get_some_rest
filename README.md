@@ -42,18 +42,17 @@ Each dir must contain only one instance of [basename]-psds.npy and [basename]-fr
 
 EXAMPLES:
 
-    Say, we have a pipeline folder with psds computed. Each subfolder has psds and freqs files inside. The most basic usage would be
+    % Say, we have a pipeline folder with psds computed.
+    % Each subfolder has psds and freqs files inside.
+    % The most basic usage would be
 
     $ psd2bandpwr ~/pipeline/*subj_id* 8 12 
     
-
     This will compute power in alpha band for each subject in ~/pipeline
 
-
-
-    Now assume we have two groups: controls and patients and we want to save results in two separate folders. It can be done like this:
+    % Now assume we have two groups: controls and patients and we want to save results in two separate folders. 
+    % It can be done like this:
 
     $ psd2bandpwr ~/pipeline/*subj_id_Control* 8 12 -d ~/Controls_alpha
     
-
     $ psd2bandpwr ~/pipeline/*subj_id_Patient* 8 12 -d ~/Patients_alpha
