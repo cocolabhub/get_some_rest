@@ -7,6 +7,8 @@ import scipy.io as sio
 import numpy as np
 from mne import create_info, EpochsArray
 from mne.io.pick import channel_type
+
+
 @contextlib.contextmanager
 def nostdout():
     save_stdout = sys.stdout
@@ -69,7 +71,8 @@ def cli(matfiles, savename, rec_type, infosrc):
 
         info = create_info(ch_names=good_info['ch_names'], sfreq=sfreq, ch_types=ch_types)
     else:
-        info = create_info(n_channels, sfreq)
+        ch_types='mag'
+        info = create_info(n_channels, sfreq, ch_types)
 
     with nostdout():
         epochs = EpochsArray(data, info)
