@@ -11,5 +11,6 @@ setup(
         [console_scripts]
         ica_var=ica_var:cli
         bst2mne=bst2mne:cli
+        psd2bandpower=psd2bandpower:cli
     ''',
 )
