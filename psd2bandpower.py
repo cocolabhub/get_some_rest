@@ -4,14 +4,16 @@ import os
 import re
 
 def get_band_power(psds, freqs, band):
+    """
+    Compute power in frequency band. Works both with 2-d and 3-d psds tensors.
+    """ 
     assert np.all(np.mean(psds) < 1E6), "We need the raw psds, not the psds converted to dB."
-    data = np.empty(shape=(psds.shape[0:2]), dtype=np.float32)
+    data = np.empty(shape=psds.shape[:-1], dtype=np.float32)
 
     freq_mask = (band[0] <= freqs) & (freqs < band[1])
     if freq_mask.sum() == 0:
         raise RuntimeError('No frequencies in band ({fmin}, {fmax}).\nFreqs:\n{freqs}'.format(fmin=band[0], fmax=band[1], freqs=freqs))
-    click.echo(psds.shape)
-    data = np.mean(psds[:,:,freq_mask], axis=2) * (band[1] - band[0])
+    data = np.mean(psds[..., freq_mask], axis=psds.ndim - 1) * (band[1] - band[0]) # "..." is to address both 2-d and 3-d cases. 
     # data = 10 * np.log10(data)
 
     return data
@@ -103,7 +105,6 @@ def cli(pwr_dirs, band, bandname, destdir):
             continue
         # print pwr_dir
         data = get_band_power(psds, freqs, band)
-        click.echo(data.shape)
         if destdir:
             savedir = destdir
             if not os.path.isdir(destdir):
