@@ -18,7 +18,11 @@ def cli(subjdirs):
     """
     Show the variance explained for mne ica solution
 
-    Usage:
+    EXAMPLES:
+    
+        Show explained variances for ica solutions for each subject in FIF_DATASET and write them to file vars.txt:
+
+        $ ica_var  FIF_DATASET/*/*-ica.fif >> vars.txt
 
     """
     for fname in subjdirs:

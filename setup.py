@@ -5,7 +5,7 @@ setup(
     version='0.1',
     py_modules=['ica_var', 'bst2mne'],
     install_requires=[
-        'Click',
+        'Click', 'mne'
     ],
     entry_points='''
         [console_scripts]

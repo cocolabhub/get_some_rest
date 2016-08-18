@@ -13,7 +13,7 @@ Show explained variance for mne-python ICA solution
 
 ##### Examples:
 ```bash
-$ ls -1 ./MEG2016/*/*-ica.fif | xargs ica_var >> vars.txt
+$ ica_var ./MEG2016/*/*-ica.fif >> vars.txt
 ```
 
 ## bst2mne
