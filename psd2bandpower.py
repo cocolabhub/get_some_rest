@@ -5,26 +5,17 @@ import re
 
 def get_band_power(psds, freqs, band):
     assert np.all(np.mean(psds) < 1E6), "We need the raw psds, not the psds converted to dB."
-    bands = [(0, 4, 'Delta'),
-             (4, 8, 'Theta'),
-             (8, 12, 'Alpha'),
-             (12, 30, 'Beta'),
-             (30, 100, 'Gamma')]
+    data = np.empty(shape=(psds.shape[0:2]), dtype=np.float32)
 
-    data = np.empty(shape=(psds.shape[0], len(bands)), dtype=np.float32)
+    freq_mask = (band[0] <= freqs) & (freqs < band[1])
+    if freq_mask.sum() == 0:
+        raise RuntimeError('No frequencies in band ({fmin}, {fmax}).\nFreqs:\n{freqs}'.format(fmin=band[0], fmax=band[1], freqs=freqs))
 
-
-    for i, (fmin, fmax, title) in enumerate(bands):
-        freq_mask = (fmin <= freqs) & (freqs < fmax)
-        if freq_mask.sum() == 0:
-            raise RuntimeError('No frequencies in band "{name}" ({fmin}, {fmax}).\nFreqs:\n{freqs}'.format(
-                name=title, fmin=fmin, fmax=fmax, freqs=freqs))
-
-        data[:, i] = np.mean(psds[:, freq_mask], axis=1)
-
-    data = 10 * np.log10(data)
+    data = np.mean(psds[freq_mask,:,:], axis=2) * (band[1] - band[0])
+    # data = 10 * np.log10(data)
 
     return data
+
 
 
 def get_psds_and_freqs_from_dir(dirname):
@@ -56,24 +47,52 @@ def get_psds_and_freqs_from_dir(dirname):
         raise RuntimeError('No -freqs.npy file in {dirname}'.format(dirname=dirname))
 
     if psds_basename == freqs_basename:
-        return psds, freqs
+        return psds, freqs, psds_basename
     else:
         raise RuntimeError('Different basenames for  "{psds_fnmame}" and "{freqs_fname}" '.format(psds_fname=psds_fname, freqs_fname=freqs_fname))
 
+def band_str(band):
+    if int(band[0]) == band[0]:
+        fmin = int(band[0])
+    else:
+        fmin = band[0]
+
+    if int(band[1]) == band[1]:
+        fmax = int(band[1])
+    else:
+        fmax = band[1]
+
+    return str(fmin) + '_' + str(fmax)
+
 
 @click.command()
-@click.argument('pwr_dirs', nargs=-1)
-def cli(pwr_dirs):
+@click.argument('pwr_dirs', nargs=-1, type=click.Path(exists=True))
+@click.argument('band', nargs=2, type=float)
+@click.option('-n', '--bandname', type=unicode, help='Name of band added to filename at saving')
+@click.option('-d', '--destdir', type=click.Path(), help='Destination directory; if unset, save to the same direcotory where loaded psds and freqs from')
+def cli(pwr_dirs, band, bandname, destdir):
     """
-    Find [basename]-psds.npy and [basename]-freqs.npy in pwr_dirs, load them to compute power in a band and save the result
-    N.B.: Each dir must contain only one instance of [basename]-psds.npy and [basename]-freqs.npy 
+    Find [basename]-psds.npy and [basename]-freqs.npy in [PWR_DIRS], load them to compute power in a BAND and save the result to [basename][-bandname][_band]-pwr.npy
+
+    Each dir must contain only one instance of [basename]-psds.npy and [basename]-freqs.npy 
     """
+    # print band
     for pwr_dir in pwr_dirs:
         try: 
-            psds, freqs = get_psds_and_freqs_from_dir(pwr_dir)
+            psds, freqs, basename = get_psds_and_freqs_from_dir(pwr_dir)
         except:
-            click.echo('Failed for {}'.format(pwr_dir))
+            click.echo('Error: Loading psds failed for {}'.format(pwr_dir))
+            continue
+        # print pwr_dir
+        data = get_band_power(psds, freqs, band)
+        if destdir:
+            savedir = destdir
+        else:
+            savedir = pwr_dir
 
+        save_fname = os.path.join(savedir, basename)
+        if bandname:
+            save_fname = save_fname + bandname + '_'
 
-#
-
+        save_fname = save_fname + band_str(band) +  '-pwr.npy'
+        np.save(save_fname, data)
