@@ -48,7 +48,7 @@ EXAMPLES:
 
     $ psd2bandpwr ~/pipeline/*subj_id* 8 12 
     
-    This will compute power in alpha band for each subject in ~/pipeline
+    # This will compute power in alpha band for each subject in ~/pipeline
 
     # Now assume we have two groups: controls and patients
     # and we want to save results in two separate folders. 

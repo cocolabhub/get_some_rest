@@ -10,8 +10,8 @@ def get_band_power(psds, freqs, band):
     freq_mask = (band[0] <= freqs) & (freqs < band[1])
     if freq_mask.sum() == 0:
         raise RuntimeError('No frequencies in band ({fmin}, {fmax}).\nFreqs:\n{freqs}'.format(fmin=band[0], fmax=band[1], freqs=freqs))
-
-    data = np.mean(psds[freq_mask,:,:], axis=2) * (band[1] - band[0])
+    click.echo(psds.shape)
+    data = np.mean(psds[:,:,freq_mask], axis=2) * (band[1] - band[0])
     # data = 10 * np.log10(data)
 
     return data
@@ -95,7 +95,6 @@ def cli(pwr_dirs, band, bandname, destdir):
         $ psd2bandpwr ~/pipeline/*subj_id_Patient* 8 12 -d ~/Patients_alpha
 
     """
-    # print band
     for pwr_dir in pwr_dirs:
         try: 
             psds, freqs, basename = get_psds_and_freqs_from_dir(pwr_dir)
@@ -104,6 +103,7 @@ def cli(pwr_dirs, band, bandname, destdir):
             continue
         # print pwr_dir
         data = get_band_power(psds, freqs, band)
+        click.echo(data.shape)
         if destdir:
             savedir = destdir
             if not os.path.isdir(destdir):
