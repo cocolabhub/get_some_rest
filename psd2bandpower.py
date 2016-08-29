@@ -108,7 +108,7 @@ def cli(pwr_dirs, band, bandname, destdir):
         if destdir:
             savedir = destdir
             if not os.path.isdir(destdir):
-                os.mkdir(destdir)
+                os.makdirs(destdir)
         else:
             savedir = pwr_dir
 
