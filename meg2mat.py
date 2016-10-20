@@ -9,7 +9,7 @@ from os import makedirs
 from mne.io import Raw as Raw_fif
 from mne.io import read_raw_ctf as Raw_ctf
 from scipy.io import savemat
-
+import numpy as np
 
 @contextlib.contextmanager
 def nostdout():
@@ -55,11 +55,15 @@ def cli(meg_files, save_path, flat):
         meg_raw = raw.pick_types(meg=True, ref_meg=False)
         data, times = meg_raw[:,:]
         ch_names = meg_raw.info['ch_names']
-        pos = find_layout(meg_raw.info).pos[:,:2]
+        la = find_layout(meg_raw.info)
+
+        pos = la.pos[:,:2]
+
+        pos_filt = np.array([pos[i,:] for i in range(len(pos)) if la.names[i] in ''.join(raw.info['ch_names'])])
         # click.echo(pos)
         new_path,_ = split(new_base) 
 
         if not exists(new_path):
             makedirs(new_path)
 
-        savemat(new_base + '.mat', {'data': data, 'times': times, 'chnames': ch_names, 'chxy': pos})
+        savemat(new_base + '.mat', {'data': data, 'times': times, 'chnames': ch_names, 'chxy': pos_filt})
