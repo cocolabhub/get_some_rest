@@ -48,11 +48,11 @@ def cli(meg_files, save_path, flat):
                 raw = Raw_fif(meg_file, preload=True, add_eeg_ref=False)
         elif ext == '.ds':
             with nostdout(): 
-                raw = Raw_ctf(meg_file, preload=True, add_eeg_ref=False)
+                raw = Raw_ctf(meg_file, preload=True)
         else:
             click.echo('ERROR: UNKNOWN FORMAT FOR {}'.format(meg_file)) 
 
-        meg_raw = raw.pick_types(meg=True)
+        meg_raw = raw.pick_types(meg=True, ref_meg=False)
         data, times = meg_raw[:,:]
         ch_names = meg_raw.info['ch_names']
         pos = find_layout(meg_raw.info).pos[:,:2]
