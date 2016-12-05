@@ -2,3 +2,4 @@
 *.sublime*
 *.egg-info/
 *.egg-info/*
+*.pkl
